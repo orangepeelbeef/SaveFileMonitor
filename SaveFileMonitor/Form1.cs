@@ -8,6 +8,7 @@ namespace SaveFileMonitor
     {
         private FileSystemWatcher fileWatcher;
         private string selectedFilePath;
+        private string outputDirectory; // Added variable to store output directory
         private bool isChangeHandled = true; // Flag to track if change is being handled
 
         public save_file_form()
@@ -30,7 +31,7 @@ namespace SaveFileMonitor
             string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
             string fileName = Path.GetFileNameWithoutExtension(selectedFilePath);
             string extension = Path.GetExtension(selectedFilePath);
-            string copyFilePath = Path.Combine(Path.GetDirectoryName(selectedFilePath), $"{fileName}_{timeStamp}{extension}");
+            string copyFilePath = Path.Combine(outputDirectory, $"{fileName}_{timeStamp}{extension}");
 
             // Copy the file to the new location
             File.Copy(selectedFilePath, copyFilePath);
@@ -52,7 +53,7 @@ namespace SaveFileMonitor
             {
                 selectedFilePath = openFileDialog.FileName;
                 lblSelectFile.Text = selectedFilePath;
-
+                lblOutputDir.Text = Path.GetDirectoryName(selectedFilePath);
                 // Begin monitoring the selected file
                 fileWatcher.Path = Path.GetDirectoryName(selectedFilePath);
                 fileWatcher.Filter = Path.GetFileName(selectedFilePath);
@@ -60,6 +61,20 @@ namespace SaveFileMonitor
 
                 // Display status message
                 UpdateStatus($"Now monitoring file: {selectedFilePath}");
+            }
+        }
+
+        private void btnSelectOutputDir_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                outputDirectory = folderBrowserDialog.SelectedPath;
+                lblOutputDir.Text = outputDirectory;
+
+                // Display status message
+                UpdateStatus($"Output Directory set to: {selectedFilePath}");
             }
         }
 
@@ -83,6 +98,5 @@ namespace SaveFileMonitor
             // Stop the timer
             timer1.Stop();
         }
-
     }
 }
