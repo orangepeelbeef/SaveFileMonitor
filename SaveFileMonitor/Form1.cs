@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace SaveFileMonitor
@@ -10,6 +12,7 @@ namespace SaveFileMonitor
         private string selectedFilePath;
         private string outputDirectory; // Added variable to store output directory
         private bool isChangeHandled = true; // Flag to track if change is being handled
+        private System.Timers.Timer systemTimer;
 
         public save_file_form()
         {
@@ -17,12 +20,22 @@ namespace SaveFileMonitor
             fileWatcher = new FileSystemWatcher();
             fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
             fileWatcher.Changed += FileChanged;
+
+            // Initialize system timer
+            systemTimer = new System.Timers.Timer();
+            systemTimer.Interval = 5000; // 5 seconds delay
+            systemTimer.AutoReset = false;
+            systemTimer.Elapsed += SystemTimerElapsed;
         }
 
         private void FileChanged(object sender, FileSystemEventArgs e)
         {
+            Debug.WriteLine("FileChanged event triggered.");
             if (!isChangeHandled)
+            {
+                Debug.WriteLine("Change not handled.");
                 return;
+            }
 
             // Set the flag to false to indicate that change is being handled
             isChangeHandled = false;
@@ -31,16 +44,39 @@ namespace SaveFileMonitor
             string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
             string fileName = Path.GetFileNameWithoutExtension(selectedFilePath);
             string extension = Path.GetExtension(selectedFilePath);
-            string copyFilePath = Path.Combine(outputDirectory, $"{fileName}_{timeStamp}{extension}");
+            string copyFilePath = Path.Combine(lblOutputDir.Text, $"{fileName}_{timeStamp}{extension}");
 
             // Copy the file to the new location
-            File.Copy(selectedFilePath, copyFilePath);
+            try
+            {
+                File.Copy(selectedFilePath, copyFilePath);
+                Debug.WriteLine($"File copied to: {copyFilePath}");
 
-            // Display status message
-            UpdateStatus($"File {Path.GetFileName(selectedFilePath)} has been changed. Copy created: {copyFilePath}");
+                // Display status message on UI thread
+                UpdateStatusOnUiThread($"File {Path.GetFileName(selectedFilePath)} has been changed. Copy created: {copyFilePath}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error copying file: {ex.Message}");
+            }
 
-            // Start the timer
-            timer1.Start();
+            // Start the system timer
+            try
+            {
+                Debug.WriteLine($"Starting timer");
+                systemTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error starting timer: {ex.Message}");
+            }
+        }
+
+        private void SystemTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            Debug.WriteLine("SystemTimerElapsed triggered.");
+            // Reset the flag to indicate that change handling is complete
+            isChangeHandled = true;
         }
 
         private void btnSelectFile_Click(object sender, EventArgs e)
@@ -60,7 +96,7 @@ namespace SaveFileMonitor
                 fileWatcher.EnableRaisingEvents = true;
 
                 // Display status message
-                UpdateStatus($"Now monitoring file: {selectedFilePath}");
+                UpdateStatusOnUiThread($"Now monitoring file: {selectedFilePath}");
             }
         }
 
@@ -74,7 +110,7 @@ namespace SaveFileMonitor
                 lblOutputDir.Text = outputDirectory;
 
                 // Display status message
-                UpdateStatus($"Output Directory set to: {selectedFilePath}");
+                UpdateStatusOnUiThread($"Output Directory set to: {outputDirectory}");
             }
         }
 
@@ -84,19 +120,21 @@ namespace SaveFileMonitor
             Application.Exit();
         }
 
-        private void UpdateStatus(string message)
+        private void UpdateStatusOnUiThread(string message)
         {
-            // Update the status label text
-            lblStatus.Text = message;
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            // Reset the flag to indicate that change handling is complete
-            isChangeHandled = true;
-
-            // Stop the timer
-            timer1.Stop();
+            if (lblStatus.InvokeRequired)
+            {
+                // Invoke required, execute on UI thread
+                lblStatus.Invoke((MethodInvoker)delegate
+                {
+                    lblStatus.Text = message;
+                });
+            }
+            else
+            {
+                // No invoke required, execute directly
+                lblStatus.Text = message;
+            }
         }
     }
 }
