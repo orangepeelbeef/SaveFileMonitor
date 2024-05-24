@@ -41,7 +41,7 @@ namespace SaveFileMonitor
             isChangeHandled = false;
 
             // Create a timestamp for the copy file name
-            string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
             string fileName = Path.GetFileNameWithoutExtension(selectedFilePath);
             string extension = Path.GetExtension(selectedFilePath);
             string copyFilePath = Path.Combine(lblOutputDir.Text, $"{fileName}_{timeStamp}{extension}");
