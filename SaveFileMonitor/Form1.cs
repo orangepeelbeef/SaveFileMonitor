@@ -36,10 +36,10 @@ namespace SaveFileMonitor
 
         private void InitializeControls()
         {
-            foreach (General.TimeFormat eTimeFormat in Enum.GetValues(typeof(General.TimeFormat)))
+            foreach (General.TimeFormat timeFormat in Enum.GetValues(typeof(General.TimeFormat)))
             {
-                string sDescription = oGeneral.GetEnumDescription(eTimeFormat);
-                cbTimestampFormat.Items.Add(sDescription);
+                string description = oGeneral.GetEnumDescription(timeFormat);
+                cbTimestampFormat.Items.Add(description);
             }
             cbTimestampFormat.SelectedIndex = (Int32)General.TimeFormat.DateTimeFormatUTC;
         }
@@ -57,15 +57,20 @@ namespace SaveFileMonitor
             isChangeHandled = false;
 
             string timeStamp;
-            string sDescription = GetSelectedDescription();
+            string description = GetSelectedDescription();
 
             // Use the format described in the enum description
-            timeStamp = DateTime.Now.ToString(sDescription);
+            timeStamp = DateTime.Now.ToString(description);
 
             string fileName = Path.GetFileNameWithoutExtension(selectedFilePath);
             string customName = tbCustomSaveFileName.Text;
             string extension = Path.GetExtension(selectedFilePath);
-            // Create the new file path. If custom name is provided, use it in the file name
+
+            // Validate custom name
+            if (!string.IsNullOrWhiteSpace(customName))
+                customName = oGeneral.RemoveInvalidFileNameChars(customName);
+
+            // Create the new file path. If custom name is provided and is not empty, use it in the file name
             string copyFilePath = Path.Combine(lblOutputDir.Text, !string.IsNullOrWhiteSpace(customName) ? $"{fileName}_{customName}_{timeStamp}{extension}" : $"{fileName}_{timeStamp}{extension}");
 
             // Copy the file to the new location
@@ -74,9 +79,9 @@ namespace SaveFileMonitor
                 File.Copy(selectedFilePath, copyFilePath);
                 Debug.WriteLine($"File copied to: {copyFilePath}");
 
-                // Display status message on UI thread
+                // Display status message on UI thread and empty the custom file name field
                 UpdateStatusOnUiThread($"File {Path.GetFileName(selectedFilePath)} has been changed. Copy created: {copyFilePath}");
-                tbCustomSaveFileName.Text = string.Empty;
+                EmptyCustomFileNameFieldOnUIThread();
             }
             catch (Exception ex)
             {
@@ -151,15 +156,15 @@ namespace SaveFileMonitor
                 //Invoke required, execute on UI thread
                 return (string)cbTimestampFormat.Invoke((Func<string>)delegate
                 {
-                    General.TimeFormat eSelectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
-                    return oGeneral.GetEnumDescription(eSelectedFormat);
+                    General.TimeFormat selectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
+                    return oGeneral.GetEnumDescription(selectedFormat);
                 });
             }
             else
             {
                 //No invoke required, execute directly
-                General.TimeFormat eSelectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
-                return oGeneral.GetEnumDescription(eSelectedFormat);
+                General.TimeFormat selectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
+                return oGeneral.GetEnumDescription(selectedFormat);
             }
         }
 
@@ -177,6 +182,23 @@ namespace SaveFileMonitor
             {
                 // No invoke required, execute directly
                 lblStatus.Text = message;
+            }
+        }
+
+        private void EmptyCustomFileNameFieldOnUIThread()
+        {
+            if (tbCustomSaveFileName.InvokeRequired)
+            {
+                // Invoke required, execute on UI thread
+                tbCustomSaveFileName.Invoke((MethodInvoker)delegate
+                {
+                    tbCustomSaveFileName.Text = String.Empty;
+                });
+            }
+            else
+            {
+                // No invoke required, execute directly
+                tbCustomSaveFileName.Text = String.Empty;
             }
         }
     }
