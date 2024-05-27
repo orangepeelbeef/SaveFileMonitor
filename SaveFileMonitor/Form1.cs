@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SaveFileMonitor.Classes;
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Timers;
@@ -13,6 +15,7 @@ namespace SaveFileMonitor
         private string outputDirectory; // Added variable to store output directory
         private bool isChangeHandled = true; // Flag to track if change is being handled
         private System.Timers.Timer systemTimer;
+        private General oGeneral = new General();
 
         public save_file_form()
         {
@@ -26,6 +29,19 @@ namespace SaveFileMonitor
             systemTimer.Interval = 5000; // 5 seconds delay
             systemTimer.AutoReset = false;
             systemTimer.Elapsed += SystemTimerElapsed;
+
+            //Initialize dropdown and other controls
+            InitializeControls();
+        }
+
+        private void InitializeControls()
+        {
+            foreach (General.TimeFormat eTimeFormat in Enum.GetValues(typeof(General.TimeFormat)))
+            {
+                string sDescription = oGeneral.GetEnumDescription(eTimeFormat);
+                cbTimestampFormat.Items.Add(sDescription);
+            }
+            cbTimestampFormat.SelectedIndex = (Int32)General.TimeFormat.DateTimeFormatUTC;
         }
 
         private void FileChanged(object sender, FileSystemEventArgs e)
@@ -40,11 +56,17 @@ namespace SaveFileMonitor
             // Set the flag to false to indicate that change is being handled
             isChangeHandled = false;
 
-            // Create a timestamp for the copy file name
-            string timeStamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            string timeStamp;
+            string sDescription = GetSelectedDescription();
+
+            // Use the format described in the enum description
+            timeStamp = DateTime.Now.ToString(sDescription);
+
             string fileName = Path.GetFileNameWithoutExtension(selectedFilePath);
+            string customName = tbCustomSaveFileName.Text;
             string extension = Path.GetExtension(selectedFilePath);
-            string copyFilePath = Path.Combine(lblOutputDir.Text, $"{fileName}_{timeStamp}{extension}");
+            // Create the new file path. If custom name is provided, use it in the file name
+            string copyFilePath = Path.Combine(lblOutputDir.Text, !string.IsNullOrWhiteSpace(customName) ? $"{fileName}_{customName}_{timeStamp}{extension}" : $"{fileName}_{timeStamp}{extension}");
 
             // Copy the file to the new location
             try
@@ -54,10 +76,12 @@ namespace SaveFileMonitor
 
                 // Display status message on UI thread
                 UpdateStatusOnUiThread($"File {Path.GetFileName(selectedFilePath)} has been changed. Copy created: {copyFilePath}");
+                tbCustomSaveFileName.Text = string.Empty;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error copying file: {ex.Message}");
+
             }
 
             // Start the system timer
@@ -118,6 +142,25 @@ namespace SaveFileMonitor
         {
             // Close the application
             Application.Exit();
+        }
+
+        private string GetSelectedDescription()
+        {
+            if (cbTimestampFormat.InvokeRequired)
+            {
+                //Invoke required, execute on UI thread
+                return (string)cbTimestampFormat.Invoke((Func<string>)delegate
+                {
+                    General.TimeFormat eSelectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
+                    return oGeneral.GetEnumDescription(eSelectedFormat);
+                });
+            }
+            else
+            {
+                //No invoke required, execute directly
+                General.TimeFormat eSelectedFormat = (General.TimeFormat)cbTimestampFormat.SelectedIndex;
+                return oGeneral.GetEnumDescription(eSelectedFormat);
+            }
         }
 
         private void UpdateStatusOnUiThread(string message)
