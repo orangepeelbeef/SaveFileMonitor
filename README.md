@@ -2,6 +2,9 @@
 
 SaveFileMonitor is a simple Windows Forms application written in C# that monitors changes to a selected file and creates a copy of the file whenever it is modified.  This is intended for use when playing long RPG video games and you may want to reload back to a point in time for missed content or achievements.
 
+![image](./savefilemonitor_screenshot.png)
+
+
 ## Features
 
 - Select a file to monitor for changes.
