@@ -37,14 +37,15 @@
             this.cbTimestampFormat = new System.Windows.Forms.ComboBox();
             this.tbCustomSaveFileName = new System.Windows.Forms.TextBox();
             this.lbCustomFileName = new System.Windows.Forms.Label();
+            this.lblTimestampformat = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnSelectFile
             // 
-            this.btnSelectFile.Location = new System.Drawing.Point(47, 94);
+            this.btnSelectFile.Location = new System.Drawing.Point(52, 62);
             this.btnSelectFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSelectFile.Name = "btnSelectFile";
-            this.btnSelectFile.Size = new System.Drawing.Size(100, 31);
+            this.btnSelectFile.Size = new System.Drawing.Size(112, 39);
             this.btnSelectFile.TabIndex = 0;
             this.btnSelectFile.Text = "Select File";
             this.btnSelectFile.UseVisualStyleBackColor = true;
@@ -52,10 +53,10 @@
             // 
             // btnQuit
             // 
-            this.btnQuit.Location = new System.Drawing.Point(47, 212);
+            this.btnQuit.Location = new System.Drawing.Point(52, 187);
             this.btnQuit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnQuit.Name = "btnQuit";
-            this.btnQuit.Size = new System.Drawing.Size(73, 31);
+            this.btnQuit.Size = new System.Drawing.Size(82, 39);
             this.btnQuit.TabIndex = 2;
             this.btnQuit.Text = "Quit";
             this.btnQuit.UseVisualStyleBackColor = true;
@@ -64,27 +65,27 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(43, 263);
+            this.lblStatus.Location = new System.Drawing.Point(48, 250);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(99, 16);
+            this.lblStatus.Size = new System.Drawing.Size(120, 20);
             this.lblStatus.TabIndex = 3;
             this.lblStatus.Text = "Program Status";
             // 
             // lblSelectFile
             // 
             this.lblSelectFile.AutoSize = true;
-            this.lblSelectFile.Location = new System.Drawing.Point(152, 101);
+            this.lblSelectFile.Location = new System.Drawing.Point(256, 71);
             this.lblSelectFile.Name = "lblSelectFile";
-            this.lblSelectFile.Size = new System.Drawing.Size(107, 16);
+            this.lblSelectFile.Size = new System.Drawing.Size(125, 20);
             this.lblSelectFile.TabIndex = 4;
             this.lblSelectFile.Text = "No File Selected";
             // 
             // btnOutputDir
             // 
-            this.btnOutputDir.Location = new System.Drawing.Point(47, 148);
-            this.btnOutputDir.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOutputDir.Location = new System.Drawing.Point(53, 123);
+            this.btnOutputDir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOutputDir.Name = "btnOutputDir";
-            this.btnOutputDir.Size = new System.Drawing.Size(155, 37);
+            this.btnOutputDir.Size = new System.Drawing.Size(174, 46);
             this.btnOutputDir.TabIndex = 5;
             this.btnOutputDir.Text = "Select Output Dir";
             this.btnOutputDir.UseVisualStyleBackColor = true;
@@ -93,10 +94,10 @@
             // lblOutputDir
             // 
             this.lblOutputDir.AutoSize = true;
-            this.lblOutputDir.Location = new System.Drawing.Point(219, 159);
+            this.lblOutputDir.Location = new System.Drawing.Point(256, 136);
             this.lblOutputDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOutputDir.Name = "lblOutputDir";
-            this.lblOutputDir.Size = new System.Drawing.Size(180, 16);
+            this.lblOutputDir.Size = new System.Drawing.Size(216, 20);
             this.lblOutputDir.TabIndex = 6;
             this.lblOutputDir.Text = "No Output Directory Selected";
             // 
@@ -104,33 +105,45 @@
             // 
             this.cbTimestampFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbTimestampFormat.FormattingEnabled = true;
-            this.cbTimestampFormat.Location = new System.Drawing.Point(511, 22);
+            this.cbTimestampFormat.Location = new System.Drawing.Point(575, 352);
+            this.cbTimestampFormat.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbTimestampFormat.Name = "cbTimestampFormat";
-            this.cbTimestampFormat.Size = new System.Drawing.Size(179, 24);
+            this.cbTimestampFormat.Size = new System.Drawing.Size(201, 28);
             this.cbTimestampFormat.TabIndex = 10;
             this.cbTimestampFormat.Text = "Timestamp Format";
             // 
             // tbCustomSaveFileName
             // 
-            this.tbCustomSaveFileName.Location = new System.Drawing.Point(167, 292);
+            this.tbCustomSaveFileName.Location = new System.Drawing.Point(193, 352);
+            this.tbCustomSaveFileName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbCustomSaveFileName.Name = "tbCustomSaveFileName";
-            this.tbCustomSaveFileName.Size = new System.Drawing.Size(166, 22);
+            this.tbCustomSaveFileName.Size = new System.Drawing.Size(186, 26);
             this.tbCustomSaveFileName.TabIndex = 12;
             // 
             // lbCustomFileName
             // 
             this.lbCustomFileName.AutoSize = true;
-            this.lbCustomFileName.Location = new System.Drawing.Point(43, 295);
+            this.lbCustomFileName.Location = new System.Drawing.Point(48, 355);
             this.lbCustomFileName.Name = "lbCustomFileName";
-            this.lbCustomFileName.Size = new System.Drawing.Size(117, 16);
+            this.lbCustomFileName.Size = new System.Drawing.Size(139, 20);
             this.lbCustomFileName.TabIndex = 11;
             this.lbCustomFileName.Text = "Custom File Name";
             // 
+            // lblTimestampformat
+            // 
+            this.lblTimestampformat.AutoSize = true;
+            this.lblTimestampformat.Location = new System.Drawing.Point(427, 355);
+            this.lblTimestampformat.Name = "lblTimestampformat";
+            this.lblTimestampformat.Size = new System.Drawing.Size(142, 20);
+            this.lblTimestampformat.TabIndex = 13;
+            this.lblTimestampformat.Text = "Timestamp Format";
+            // 
             // save_file_form
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(711, 359);
+            this.ClientSize = new System.Drawing.Size(800, 449);
+            this.Controls.Add(this.lblTimestampformat);
             this.Controls.Add(this.tbCustomSaveFileName);
             this.Controls.Add(this.lbCustomFileName);
             this.Controls.Add(this.cbTimestampFormat);
@@ -159,6 +172,7 @@
         private System.Windows.Forms.ComboBox cbTimestampFormat;
         private System.Windows.Forms.TextBox tbCustomSaveFileName;
         private System.Windows.Forms.Label lbCustomFileName;
+        private System.Windows.Forms.Label lblTimestampformat;
     }
 }
 
